@@ -26,11 +26,11 @@ export class InterceptorService implements HttpInterceptor {
         }
 
         if (tokenBackend !== null && tokenBackend !== undefined){
-            req = req.clone({
-                setHeaders: {
-                    'Authorization': 'Bearer ' + tokenBackend
-                }
-            });
+            // req = req.clone({
+            //     setHeaders: {
+            //         'Authorization': 'Bearer ' + tokenBackend
+            //     }
+            // });
         }
         
         return next.handle(req).pipe(

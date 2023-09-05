@@ -21,6 +21,8 @@ import { ServiceWorkerModule } from '@angular/service-worker';
 import { environment } from 'src/environments/environment';
 import { UpdateAppModalModule } from './shared/modules/update-app-modal/update-app-modal.module';
 import { InstallPromptModule } from './shared/modules/install-prompt/install-prompt.module';
+import { IdentidadeDigitalComponent } from './modules/identidade-digital/identidade-digital.component';
+import { FichaMilitarComponent } from './modules/ficha-militar/ficha-militar.component';
 registerLocaleData(localePT);
 
 @NgModule({
@@ -29,6 +31,8 @@ registerLocaleData(localePT);
     NotFoundComponent,
     GlobalErrorComponent,
     MaintenanceComponent,
+    IdentidadeDigitalComponent,
+    FichaMilitarComponent,
   ],
   imports: [
     BrowserModule,
