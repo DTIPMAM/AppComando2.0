@@ -34,6 +34,7 @@ export class LoginComponent implements OnInit {
   ngOnInit() {
     this.activatedRoute.queryParams.subscribe(params => this.fromUrl = params['fromUrl']);
     this.initStylesEvents();
+
   }
 
   private initStylesEvents(): void {
@@ -95,7 +96,7 @@ export class LoginComponent implements OnInit {
     if (this.loginForm.valid){
       this.isHaveError = false;
       this.isLoadingLogin = true;
-
+      console.log(this.loginForm.value)
       // Remova esta parte quando for utilizar o login verdadeiro
       if (this.webTokenService.setToken(environment.fakeToken) && this.webTokenService.setTokenValid()){
         setTimeout(() => {

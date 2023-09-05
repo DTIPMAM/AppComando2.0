@@ -4,6 +4,9 @@ import { GlobalErrorComponent } from './errors/global-error/global-error.compone
 import { NotFoundComponent } from './errors/not-found/not-found.component';
 import { LoginAuthGuard } from './services/auth/login-auth.guard';
 import { RoutesAuthGuard } from './services/auth/routes-auth.guard';
+import * as path from "path";
+import {HomeComponent} from "./home/home.component";
+import {IdentidadeDigitalComponent} from "./modules/identidade-digital/identidade-digital.component";
 
 const routes: Routes = [
   {
@@ -23,8 +26,23 @@ const routes: Routes = [
     canActivate: [RoutesAuthGuard]
   },
   {
+    path: 'home',
+    children: [
+      {
+        path: '',
+        title: 'Home',
+        component: HomeComponent
+      },
+      {
+        path: 'identidade-digital',
+        title: 'Identidade',
+        component: IdentidadeDigitalComponent
+      }
+    ]
+  },
+  {
     path: 'error',
-    title: 'SX - Error',
+    title: 'App Comando - Error',
     component: GlobalErrorComponent,
     canActivate: [RoutesAuthGuard]
   },

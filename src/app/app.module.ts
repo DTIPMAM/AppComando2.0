@@ -20,6 +20,8 @@ import { NgxResizeObserverModule } from 'ngx-resize-observer';
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { UpdateAppModalModule } from './shared/modules/update-app-modal/update-app-modal.module';
 import { InstallPromptModule } from './shared/modules/install-prompt/install-prompt.module';
+import { IdentidadeDigitalComponent } from './modules/identidade-digital/identidade-digital.component';
+import { FichaMilitarComponent } from './modules/ficha-militar/ficha-militar.component';
 registerLocaleData(localePT);
 import { environment } from 'src/environments/environment';
 import {AngularFireModule} from "@angular/fire/compat/";
@@ -31,6 +33,8 @@ initializeApp(environment.firebaseConfig);
     NotFoundComponent,
     GlobalErrorComponent,
     MaintenanceComponent,
+    IdentidadeDigitalComponent,
+    FichaMilitarComponent,
   ],
   imports: [
     BrowserModule,
