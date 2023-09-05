@@ -7,8 +7,8 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { WebTokenService } from '../../services/auth/web-token.service';
 import { UserService } from '../../services/user.service';
 import { usernameValidator } from '../../shared/directives/username.validator';
-import { error } from '@angular/compiler-cli/src/transformers/util';
 import { environment } from 'src/environments/environment';
+import { getMessaging, getToken, onMessage } from "firebase/messaging";
 
 @Component({
   selector: 'app-login',
@@ -40,6 +40,25 @@ export class LoginComponent implements OnInit {
     this.initLoginForm();
     this.adjustDisplayHeight();
     window.addEventListener('resize', this.adjustDisplayHeight);
+  }
+
+  requestPermission() {
+    const messaging = getMessaging();
+    getToken(messaging, { vapidKey:environment.firebaseConfig.vapidKey }).then((currentToken) => {
+      if (currentToken) {
+        // Send the token to your server and update the UI if necessary
+        // ...
+        console.log(currentToken)
+      } else {
+        // Show permission request UI
+        console.log('No registration token available. Request permission to generate one.');
+        // ...
+      }
+    }).catch((err) => {
+      console.log('An error occurred while retrieving token. ', err);
+      // ...
+    });
+
   }
 
   // Add or remove style scss class by window width size
@@ -83,7 +102,8 @@ export class LoginComponent implements OnInit {
           this.fromUrl?this.router.navigateByUrl(this.fromUrl):this.router.navigate(['home']);
         }, 2000);
       }
-      
+      this.requestPermission();
+
       // Descomente e edite quando for utilizar a API real de login
       // const subscription = this.userService.login(this.loginForm.value as LoginInterface).subscribe({
       //     next: (response: JwtTokenInterface) => {      

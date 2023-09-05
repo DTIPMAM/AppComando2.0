@@ -18,11 +18,13 @@ import localePT from '@angular/common/locales/pt';
 import { MatPaginatorIntl } from '@angular/material/paginator';
 import { NgxResizeObserverModule } from 'ngx-resize-observer';
 import { ServiceWorkerModule } from '@angular/service-worker';
-import { environment } from 'src/environments/environment';
 import { UpdateAppModalModule } from './shared/modules/update-app-modal/update-app-modal.module';
 import { InstallPromptModule } from './shared/modules/install-prompt/install-prompt.module';
 registerLocaleData(localePT);
-
+import { environment } from 'src/environments/environment';
+import {AngularFireModule} from "@angular/fire/compat/";
+import { initializeApp } from "firebase/app";
+initializeApp(environment.firebaseConfig);
 @NgModule({
   declarations: [
     AppComponent,
@@ -37,6 +39,7 @@ registerLocaleData(localePT);
     FooterModule,
     BrowserAnimationsModule,
     SharedModule,
+    // AngularFireModule.initializeApp(environment.firebaseConfig),
     UserPrintMarkModule,
     HttpClientModule,
     NgxResizeObserverModule,

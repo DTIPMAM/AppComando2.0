@@ -6,6 +6,10 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { InstallPromptComponent } from './shared/modules/install-prompt/install-prompt.component';
 import { UpdateAppModalComponent } from './shared/modules/update-app-modal/update-app-modal.component';
 import { SwUpdate, VersionEvent } from '@angular/service-worker';
+import {initializeApp} from "firebase/app";
+import {environment} from "../environments/environment";
+import firebase from "firebase/compat/app";
+
 
 @Component({
   selector: 'app-root',
