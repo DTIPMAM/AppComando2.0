@@ -26,6 +26,7 @@ export class InterceptorService implements HttpInterceptor {
         }
 
         if (tokenBackend !== null && tokenBackend !== undefined){
+            console.log(tokenBackend);
             // req = req.clone({
             //     setHeaders: {
             //         'Authorization': 'Bearer ' + tokenBackend

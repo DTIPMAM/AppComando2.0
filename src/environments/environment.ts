@@ -6,7 +6,7 @@ import { getAnalytics } from "firebase/analytics";
 
 export const environment = {
   production: false,
-  urlBackend: "",
+  urlBackend: "http://localhost/comandopmam/index.php/",
   secret: 'TEXTO_QUALQUER_PARA_AMBIENTE_DEV',
   fakeToken: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZFVzZXIiOjEsInVzZXIiOiIzMjM4NTI3NDE3NyIsIm5vbWUiOiIyIFRFTiBGRVJOQURBIExJTUEiLCJncnVwb3MiOlsiQURNSU4iXX0.BRp64vTXbNUPMmq2UTJL-aS28_IZZFU4M9kIaA25QUI",
   firebaseConfig: {

@@ -1,5 +1,5 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { LoginInterface, JwtTokenInterface } from './../../shared/interfaces/login.interface';
+import { LoginInterface, JwtTokenInterface, IPAdressInterface } from "./../../shared/interfaces/login.interface";
 import { ActivatedRoute, Router } from '@angular/router';
 import { constants } from '../../../environments/constants';
 import { Component, OnInit } from '@angular/core';
@@ -8,7 +8,8 @@ import { WebTokenService } from '../../services/auth/web-token.service';
 import { UserService } from '../../services/user.service';
 import { usernameValidator } from '../../shared/directives/username.validator';
 import { environment } from 'src/environments/environment';
-import { getMessaging, getToken, onMessage } from "firebase/messaging";
+import { getMessaging, getToken } from "firebase/messaging";
+import { ResponseLoginInterface } from "../../shared/interfaces/response-login.interface";
 
 @Component({
   selector: 'app-login',
@@ -22,6 +23,9 @@ export class LoginComponent implements OnInit {
   public isLoadingLogin: boolean = false;
   public alertMessage: string;
   public isHaveError: boolean = false;
+  private tokenFirebase: string;
+  public loginInterface: LoginInterface;
+  private ipAdress: string;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -34,7 +38,8 @@ export class LoginComponent implements OnInit {
   ngOnInit() {
     this.activatedRoute.queryParams.subscribe(params => this.fromUrl = params['fromUrl']);
     this.initStylesEvents();
-
+    this.getIpAdress();
+    this.requestPermission();
   }
 
   private initStylesEvents(): void {
@@ -43,19 +48,21 @@ export class LoginComponent implements OnInit {
     window.addEventListener('resize', this.adjustDisplayHeight);
   }
 
-  requestPermission() {
+  public requestPermission() {
     const messaging = getMessaging();
     getToken(messaging, { vapidKey:environment.firebaseConfig.vapidKey }).then((currentToken) => {
       if (currentToken) {
         // Send the token to your server and update the UI if necessary
         // ...
-        console.log(currentToken)
+        this.tokenFirebase = currentToken;
       } else {
         // Show permission request UI
         console.log('No registration token available. Request permission to generate one.');
         // ...
       }
     }).catch((err) => {
+      this.alertMessage = err;
+      this.isHaveError = true;
       console.log('An error occurred while retrieving token. ', err);
       // ...
     });
@@ -92,48 +99,62 @@ export class LoginComponent implements OnInit {
     });
   }
 
+  private setLogin(): LoginInterface{
+    const login = { } as LoginInterface;
+    login.cpf = this.loginForm.get('username')?.value;
+    login.senha = this.loginForm.get('password')?.value;
+    login.token_firebase = this.tokenFirebase;
+    login.id_os = '1';
+    login.id_app = 'App Comando';
+    login.app_version = '1.0.0';
+    login.app_version_name = '1.0.0';
+    login.modelo_cel = window.navigator.userAgent;
+    login.sdk = '';
+    login.ip = this.ipAdress;
+    return login;
+  }
+
+  private getIpAdress(): void{
+    this.userService.getIpAdress().subscribe({
+      next: (response: IPAdressInterface) => {
+        this.ipAdress = response.ip;
+      }
+    });
+  }
+
   public submitForm(): void {
     if (this.loginForm.valid){
       this.isHaveError = false;
       this.isLoadingLogin = true;
-      console.log(this.loginForm.value)
-      // Remova esta parte quando for utilizar o login verdadeiro
-      if (this.webTokenService.setToken(environment.fakeToken) && this.webTokenService.setTokenValid()){
-        setTimeout(() => {
-          this.fromUrl?this.router.navigateByUrl(this.fromUrl):this.router.navigate(['home']);
-        }, 2000);
-      }
-      this.requestPermission();
-
       // Descomente e edite quando for utilizar a API real de login
-      // const subscription = this.userService.login(this.loginForm.value as LoginInterface).subscribe({
-      //     next: (response: JwtTokenInterface) => {      
-      //       if (response.jwtToken !== undefined) {
-      //         if (this.webTokenService.setToken(response.jwtToken) && this.webTokenService.setTokenValid()){
-      //           this.fromUrl?this.router.navigateByUrl(this.fromUrl):this.router.navigate(['home']);
-      //         } else {
-      //           let msgError: string = "Não foi possível salvar o token so usuário!"; 
-      //           console.log(msgError);
-      //           this.loginForm.reset();
-      //           this.alertMessage = msgError;
-      //           this.isLoadingLogin = false;
-      //           this.isHaveError = true;
-      //           this.userService.logout();
-      //         }
-      //       } else {
-      //         this.loginForm.reset();
-      //         this.alertMessage = response.message?response.message+".":'';
-      //         this.isLoadingLogin = false;
-      //         this.isHaveError = true;
-      //       }
-      //     },
-      //     error: (error: HttpErrorResponse) => {
-      //       this.loginForm.reset();
-      //       this.isLoadingLogin = false;
-      //       this.isHaveError = true;
-      //     }
-      // });
-      // subscription.unsubscribe();
+      const subscription = this.userService.login(this.setLogin()).subscribe({
+          next: (response: ResponseLoginInterface) => {
+            if (response.token !== undefined) {
+              if (this.webTokenService.setToken(response.token) && this.webTokenService.setTokenValid()){
+                this.fromUrl?this.router.navigateByUrl(this.fromUrl):this.router.navigate(['home']);
+              } else {
+                let msgError: string = "Não foi possível salvar o token so usuário!";
+                console.log(msgError);
+                this.loginForm.reset();
+                this.alertMessage = msgError;
+                this.isLoadingLogin = false;
+                this.isHaveError = true;
+                this.userService.logout();
+              }
+            } else {
+              this.loginForm.reset();
+              this.alertMessage = response.message?response.message+".":'';
+              this.isLoadingLogin = false;
+              this.isHaveError = true;
+            }
+          },
+          error: (error: HttpErrorResponse) => {
+            this.loginForm.reset();
+            this.isLoadingLogin = false;
+            this.isHaveError = true;
+          }
+      });
+      subscription.unsubscribe();
     } else {
       this.alertMessage = "Preencha CPF e senha";
       this.isHaveError = true;

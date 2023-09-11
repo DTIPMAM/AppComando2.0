@@ -4,7 +4,8 @@ import { environment } from './../../environments/environment';
 import { User, UserSystemInterface } from './../shared/interfaces/user.interface';
 import {WebTokenService} from './auth/web-token.service';
 import {Injectable } from '@angular/core';
-import { LoginInterface, JwtTokenInterface } from '../shared/interfaces/login.interface';
+import { LoginInterface, JwtTokenInterface, IPAdressInterface } from "../shared/interfaces/login.interface";
+import { ResponseLoginInterface } from "../shared/interfaces/response-login.interface";
 
 @Injectable({
   providedIn: 'root'
@@ -12,20 +13,32 @@ import { LoginInterface, JwtTokenInterface } from '../shared/interfaces/login.in
 export class UserService extends GlobalService {
   private webTokenService: WebTokenService = new WebTokenService();
 
-  public login(loginData: LoginInterface): Observable<JwtTokenInterface> {
+  public login(loginData: LoginInterface): Observable<ResponseLoginInterface> {
     const arrayPost = {
-      user: loginData.username,
-      pass: loginData.password
+      cpf: loginData.cpf,
+      senha: loginData.senha,
+      token_firebase: loginData.token_firebase,
+      id_os: loginData.id_os,
+      id_app: loginData.id_app,
+      app_version: loginData.app_version,
+      app_version_name: loginData.app_version_name,
+      modelo_cel: loginData.modelo_cel,
+      sdk: loginData.sdk,
+      ip: loginData.ip
     };
 
     // Criado apenas para demonstração e teste, deve ser substuído pela chamada da API de login do sistema
-    let obJwt: Observable<JwtTokenInterface> = new Observable();
-    return obJwt;
+    // let obJwt: Observable<JwtTokenInterface> = new Observable();
+    // return obJwt;
 
     // Descomentar substituindo a URL da API de login
-    // return this.getHttp().post<JwtTokenInterface>(
-    //   `${environment.urlBackend}/site/api-token`, arrayPost
-    // );
+    return this.getHttp().post<ResponseLoginInterface>(
+      `${environment.urlBackend}geosecurity/default/loginapp`, arrayPost
+    );
+  }
+
+  public getIpAdress(): Observable<IPAdressInterface>{
+    return this.getHttp().get<IPAdressInterface>('https://api.ipify.org/?format=json');
   }
 
   public isLogged(): boolean {

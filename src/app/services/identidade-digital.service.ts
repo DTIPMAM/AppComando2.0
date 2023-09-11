@@ -17,7 +17,7 @@ public generateId(token:string, id: number): Observable<any> {
     token: token,
     id: id
   }
-  return this.getHttp().post<any>(`${environment.appcomando_url}dpa/identidade/api_gerar_ci`, array);
+  return this.getHttp().post<any>(`${environment.urlBackend}dpa/identidade/api_gerar_ci`, array);
 }
 
   public login(token:string, senha: string): Observable<any> {
@@ -25,7 +25,7 @@ public generateId(token:string, id: number): Observable<any> {
       cpf: token,
       secret: senha
     }
-    return this.getHttp().post<any>(`${environment.appcomando_url}geosecurity/default/loginportal`, array, {
+    return this.getHttp().post<any>(`${environment.urlBackend}geosecurity/default/loginportal`, array, {
 
     });
   }
